@@ -205,4 +205,135 @@ WTypeisHinitᵂ (C , sC) = γ
   β = forth , ((back , forth-back) , (back , back-forth))
 
   γ : _
-  γ = equiv-to-singleton β α 
+  γ = equiv-to-singleton β α
+
+-- much the same holds if induction is given merely up to propositional equality
+module homotopy-inductive-types
+ (W : 𝓤₀ ̇) (sup₀ : (a : A) → (B a → W) → W)
+ (ind : (E : W → 𝓤₀ ̇) → ((a : A) (f : B a → W) → (∀ b → E (f b)) → E (sup₀ a f)) →
+ (w : W) → E w) (hind : ∀ E e a f → ind E e (sup₀ a f) ≡ e a f (λ b → ind E e (f b))) where
+
+ 
+ HW-Induction' : (X : W → 𝓤₀ ̇) → ((a : A) (f : B a → W) → (∀ b
+             → X (f b)) → X (sup₀ a f)) → (w : W) → X w
+ HW-Induction' X e = ind X λ a f → e a f
+
+ HW-Recursion' : (X : 𝓤₀ ̇) → ((a : A) (f : B a → W) → (∀ b → X) → X) → W → X
+ HW-Recursion' X e = HW-Induction' (λ _ → X) e
+
+ HW-Iteration' : (X : 𝓤₀ ̇) → ((a : A) (f : B a → X) → X) → W → X
+ HW-Iteration' X e = HW-Recursion' X λ a f → e a
+
+ module Univ-Prop (C : 𝓤₀ ̇) (sC : (a : A) (f : B a → C) → C) where
+
+  first-retraction : (h : W → C) → ((∀ a f → (h (sup₀ a f) ≡ sC a (h ∘ f)))
+                                   ◁ (h ≋ HW-Iteration' C sC))
+  first-retraction h = r , (s , η)
+   where
+    r : (h ≋ HW-Iteration' C sC) → (∀ a f → (h (sup₀ a f) ≡ sC a (h ∘ f)))
+    r →p a f = h (sup₀ a f) ≡⟨ →p (sup₀ a f) ⟩
+                HW-Iteration' C sC (sup₀ a f) ≡⟨ hind _ (λ a' f' → sC a') a f ⟩
+                sC a (λ b → ind (λ v → C) (λ a' f' → sC a') (f b))
+                   ≡⟨ ap (λ - → (sC a (λ b → - b))) ((dfunext fe (→p ∘ f)) ⁻¹) ⟩
+                sC a (h ∘ f) ∎
+
+    s-aux : (codomain r) → ((a : A) (f : B a → W) → (∀ b → h (f b) ≡ HW-Iteration' C sC (f b))
+         → h (sup₀ a f) ≡ HW-Iteration' C sC (sup₀ a f))
+    s-aux →p a f g = h (sup₀ a f) ≡⟨ →p a f ⟩
+                      sC a (h ∘ f) ≡⟨ ap (sC a) (dfunext fe g) ⟩
+                      sC a (λ z → HW-Iteration' C sC (f z))
+                         ≡⟨ (hind _ (λ a' f' → sC a') a f) ⁻¹ ⟩
+                      HW-Iteration' C sC (sup₀ a f) ∎
+
+    s : (codomain r) → (domain r)
+    s →p = ind (λ z → h z ≡ HW-Iteration' C sC z) (s-aux →p)
+
+    -- i wonder if anybody could write, like, a ring solver, but specifically for chains of
+    -- equality proofs
+    η : (→p : codomain r) → r (s →p) ≡ →p
+    η →p = dfunext fe q
+     where
+      q : r (s →p) ∼ →p
+      q a = dfunext fe q'
+       where
+        q' : r (s →p) a ∼ →p a
+        q' f = r (s →p) a f ≡⟨ refl ⟩
+               (s →p) (sup₀ a f) ∙ (hind _ (λ a' f' → sC a') a f
+             ∙ ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹)) ≡⟨ refl ⟩
+               ind (λ z → h z ≡ HW-Iteration' C sC z) (s-aux →p) (sup₀ a f)
+             ∙ (hind _ (λ a' f' → sC a') a f
+             ∙ ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹))
+               ≡⟨ ap (_∙ (hind _ (λ a' f' → sC a') a f
+                       ∙ ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹)))
+                     (hind (λ z → h z ≡ HW-Iteration' C sC z) (s-aux →p) a f) ⟩
+               s-aux →p a f ((s →p) ∘ f) ∙ (hind _ (λ a' f' → sC a') a f
+             ∙ ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹)) ≡⟨ refl ⟩
+               →p a f ∙ (ap (sC a) (dfunext fe ((s →p) ∘ f))
+                       ∙ (hind _ (λ a' f' → sC a') a f) ⁻¹)
+             ∙ (hind _ (λ a' f' → sC a') a f
+             ∙ ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹))
+               ≡⟨ ap (_∙ (hind (λ _ → C) (λ a' f' → sC a') a f
+                       ∙ ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹)))
+                     (∙assoc (→p a f) (ap (sC a) (dfunext fe ((s →p) ∘ f)))
+                             ((hind (λ _ → C) (λ a' f' → sC a') a f) ⁻¹)) ⁻¹ ⟩
+               (→p a f ∙ ap (sC a) (dfunext fe ((s →p) ∘ f)))
+             ∙ (hind (λ _ → C) (λ a' f' → sC a') a f) ⁻¹
+             ∙ (hind (λ _ → C) (λ a' f' → sC a') a f
+             ∙ ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹))
+               ≡⟨ (∙assoc (→p a f
+                        ∙ ap (sC a) (dfunext fe ((s →p) ∘ f))
+                        ∙ (hind (λ _ → C) (λ a' f' → sC a') a f) ⁻¹)
+                          (hind (λ _ → C) (λ a' f' → sC a') a f)
+                          (ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹))) ⁻¹ ⟩
+               →p a f ∙ ap (sC a) (dfunext fe ((s →p) ∘ f))
+             ∙ (hind (λ _ → C) (λ a' f' → sC a') a f) ⁻¹
+             ∙ hind (λ _ → C) (λ a' f' → sC a') a f
+             ∙ ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹)
+               ≡⟨ ap (_∙ ap (sC a) ((dfunext fe ((s →p) ∘ f)) ⁻¹))
+                     (∙assoc (→p a f ∙ ap (sC a) (dfunext fe ((s →p) ∘ f)))
+                             ((hind (λ _ → C) (λ a' f' → sC a') a f) ⁻¹)
+                             (hind (λ _ → C) (λ a' f' → sC a') a f)) ⟩
+               →p a f ∙ ap (sC a) (dfunext fe (s →p ∘ f))
+             ∙ (hind (λ _ → C) (λ a' f' → sC a') a f ⁻¹
+              ∙ hind (λ _ → C) (λ a' f' → sC a') a f)
+             ∙ ap (sC a) (dfunext fe (s →p ∘ f) ⁻¹)
+               ≡⟨ ap (λ - → →p a f ∙ ap (sC a) (dfunext fe (s →p ∘ f)) ∙ - ∙
+                             ap (sC a) (dfunext fe (s →p ∘ f) ⁻¹))
+                     ((sym-is-inverse (hind (λ _ → C) (λ a' f' → sC a') a f)) ⁻¹) ⟩
+               →p a f ∙ ap (sC a) (dfunext fe (s →p ∘ f))
+             ∙ refl
+             ∙ ap (sC a) (dfunext fe (s →p ∘ f) ⁻¹) ≡⟨ refl ⟩
+               →p a f ∙ ap (sC a) (dfunext fe (s →p ∘ f))
+             ∙ ap (sC a) (dfunext fe (s →p ∘ f) ⁻¹)
+               ≡⟨ ap (→p a f ∙ ap (sC a) (dfunext fe (s →p ∘ f)) ∙_)
+                     ((ap-sym (sC a) (dfunext fe (s →p ∘ f))) ⁻¹) ⟩
+               →p a f ∙ ap (sC a) (dfunext fe (s →p ∘ f))
+             ∙ (ap (sC a) (dfunext fe (s →p ∘ f))) ⁻¹
+               ≡⟨ ∙assoc (→p a f) (ap (sC a) (dfunext fe (s →p ∘ f)))
+                         ((ap (sC a) (dfunext fe (s →p ∘ f))) ⁻¹) ⟩
+               →p a f
+             ∙ (ap (sC a) (dfunext fe (s →p ∘ f))
+             ∙ (ap (sC a) (dfunext fe (s →p ∘ f))) ⁻¹)
+               ≡⟨ ap (→p a f ∙_) ((sym-is-inverse' (ap (sC a) (dfunext fe (s →p ∘ f)))) ⁻¹) ⟩
+               →p a f ∎
+
+  second-retraction : (h : W → C) → (∀ a f → h (sup₀ a f) ≡ sC a (h ∘ f))
+                                   ◁ (h ≡ HW-Iteration' C sC)
+  second-retraction h = (∀ a f → h (sup₀ a f) ≡ sC a (h ∘ f)) ◁⟨ first-retraction h ⟩
+                        (((h ≋ HW-Iteration' C sC) ◁⟨ ≃-gives-◁ (≃-sym (happly , (fe _ _))) ⟩
+                        ((h ≡ HW-Iteration' C sC) ◀)))
+
+  final-retraction : WHom (W , sup₀) (C , sC) ◁ Σ λ h → h ≡ HW-Iteration' C sC
+  final-retraction = Σ-retract second-retraction
+
+
+
+ hindWisHinit : isHinitᵂ (W , sup₀)
+ hindWisHinit C = γ
+  where
+   open Univ-Prop (pr₁ C) (pr₂ C)
+
+   γ : _
+   γ = retract-of-singleton final-retraction
+       (singleton-types-are-singletons! _ (HW-Iteration' (pr₁ C) (pr₂ C))) 
+ 
