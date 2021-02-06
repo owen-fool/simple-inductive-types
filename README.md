@@ -21,7 +21,7 @@ Types (for an A and a B) is contractible.
 Sources I've used are:
 
 The HoTT Book, available to read here: https://homotopytypetheory.org/book/
-the relevant sections are from pages 154-160
+the relevant sections are from pages 154-161
 
 Introduction to Univalent Foundations of Mathematics with Agda, here: 
 https://www.cs.bham.ac.uk/~mhe/HoTT-UF-in-Agda-Lecture-Notes/index.html
