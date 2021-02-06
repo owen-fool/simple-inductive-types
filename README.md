@@ -26,6 +26,9 @@ the relevant sections are from pages 154-160
 Introduction to Univalent Foundations of Mathematics with Agda, here: 
 https://www.cs.bham.ac.uk/~mhe/HoTT-UF-in-Agda-Lecture-Notes/index.html
 
+Inductive Types in homotopy type theory by Steve Awodey, Nicola Gambino and 
+Kristina Sojakova, available here: https://arxiv.org/abs/1201.3898
+
 Libraries I've used are:
 
 Type Topology, here: https://github.com/martinescardo/TypeTopology
