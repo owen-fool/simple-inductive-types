@@ -34,3 +34,11 @@ Libraries I've used are:
 Type Topology, here: https://github.com/martinescardo/TypeTopology
 
 Cubical, here: https://github.com/agda/cubical
+
+TODO:
+
+rename 'silly' functions in homwtypes2
+
+tidy up long proofs
+
+add a similar proof of the equivalence of other notions of weak W-Types, per comment at the end of homwtypes2
