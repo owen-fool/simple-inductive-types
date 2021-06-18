@@ -143,7 +143,7 @@ Wd≃Wd' A B = ≃-sym Σ-assoc
 
 -- The type of homotopy W-Types (for some A, B) is contractible
 -- This follows from the proof, in another file, that homotopy W-Types are initial W-Algebras, and
--- the fact that initial objects are always equal, and from ρ above which proves there is only one
+-- the fact that initial w-algebras are always equal, and from ρ above which proves there is only one
 -- induction function for the standard W, with the supremum.
 contr-Wd : (A : 𝓤₀ ̇) (B : A → 𝓤₀ ̇) → is-contr (Wd A B)
 contr-Wd A B = equiv-to-singleton (Wd≃Wd' A B) γ

@@ -1,7 +1,7 @@
 {-
    Proving a theorem from `Homotopy Initial Algebras in Type Theory' by Steve Awodey, Nicola 
-   Gambino and Kristina Sojakova. Using Structural Identity Principle. Hope to eventually build up
-   to a proof that the type of W-Types with induction given only up to propositional equality is 
+   Gambino and Kristina Sojakova. Using Structural Identity Principle. This is used in the proof 
+   that the type of W-Types with induction given only up to propositional equality is 
    contractible.
 -}
 {-# OPTIONS --safe --exact-split #-}
