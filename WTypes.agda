@@ -16,7 +16,7 @@ data ⊥ : 𝓤₀ ̇ where
 -- I don't know whether or not function extensionality is required to prove this
 -- but it feels bad that I've used it
 no-function : (A : 𝓤₀ ̇) (f : ⊥ → A) → (λ ()) ≡ f
-no-function A f = nfunext fe (λ ())
+no-function A f = dfunext fe (λ ())
 
 data ⊤ : 𝓤₀ ̇ where
  ⋆ : ⊤
@@ -132,11 +132,11 @@ module testing-+ʷ where
  test1 n = refl
 
  test2-aux : e-Type 𝔹 (rec₂ ⊥ ⊤) (λ m → (n : ℕʷ) → +ʷ m n ≡ +ʷ n m)
- test2-aux b₀ f g (sup b₀ h) = ap (sup b₀) (nfunext fe (λ ()))
+ test2-aux b₀ f g (sup b₀ h) = ap (sup b₀) (dfunext fe (λ ()))
  test2-aux b₀ f g (sup b₁ h) = refl
  test2-aux b₁ f g (sup b₀ h) = refl
  test2-aux b₁ f g (sup b₁ h) = ap (sup b₁)
-  (nfunext fe λ _ → ap (sup b₁) (nfunext fe (λ _ → g ⋆ (h ⋆))))
+  (dfunext fe λ _ → ap (sup b₁) (dfunext fe (λ _ → g ⋆ (h ⋆))))
 
 -- again, heavy reliance on function extensionality feels innapropriate
 
@@ -145,9 +145,9 @@ module testing-+ʷ where
 
  test5-aux : e-Type 𝔹 (rec₂ ⊥ ⊤) (λ n → +ʷ 1ʷ n ≡ succʷ n)
  test5-aux b₀ f g = ap (sup b₁)
-  (nfunext fe (λ _ → ap (sup b₀) (no-function ℕʷ f)))
+  (dfunext fe (λ _ → ap (sup b₀) (no-function ℕʷ f)))
  test5-aux b₁ f g = ap (sup b₁)
-  (nfunext fe λ _ → ap (sup b₁) (nfunext fe γ))
+  (dfunext fe λ _ → ap (sup b₁) (dfunext fe γ))
   where
    γ : _
    γ ⋆ = refl
@@ -160,8 +160,8 @@ module testing-+ʷ where
  test3-aux-aux b₀ f g n = refl
  test3-aux-aux b₁ f g (sup b₀ h) = refl
  test3-aux-aux b₁ f g (sup b₁ h) =
-  ap (sup b₁) (nfunext fe (λ _ → ap (sup b₁)
-              (nfunext fe λ _ → ((test5 (+ʷ (f ⋆) (h ⋆))) ⁻¹) ∙
+  ap (sup b₁) (dfunext fe (λ _ → ap (sup b₁)
+              (dfunext fe λ _ → ((test5 (+ʷ (f ⋆) (h ⋆))) ⁻¹) ∙
                ((g ⋆ (h ⋆)) ∙ ap (λ - → +ʷ - (h ⋆)) (test5 (f ⋆))))))
 
  test3-aux-prim : (w : W 𝔹 (rec₂ ⊥ ⊤)) → _
@@ -179,8 +179,8 @@ module testing-+ʷ where
  test3-aux b₁ f g (sup b₀ h) (sup b₁ i) = refl
  test3-aux b₁ f g (sup b₁ h) (sup b₀ i) = refl
  test3-aux b₁ f g (sup b₁ h) (sup b₁ i) = ap (sup b₁)
-  (nfunext fe λ _ → ap (sup b₁)
-  (nfunext fe λ _ →
+  (dfunext fe λ _ → ap (sup b₁)
+  (dfunext fe λ _ →
                     (ap (Induction 𝔹 (rec₂ ⊥ ⊤) (λ _ → ℕʷ → ℕʷ) +ʷ-aux (f ⋆))
    ((test5 (Induction 𝔹 (rec₂ ⊥ ⊤) (λ _ → ℕʷ → ℕʷ) +ʷ-aux (h ⋆) (i ⋆))) ⁻¹))
    ∙ ((ap (+ʷ (f ⋆)) (test3-aux-prim (h ⋆) (i ⋆)))

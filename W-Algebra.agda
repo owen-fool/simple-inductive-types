@@ -3,7 +3,7 @@
    proof of the similar lemma for natural numbers that's there, library used is Martin Escardo's 
    Type Topology.-}
 {-# OPTIONS --safe --exact-split #-}
-{-# OPTIONS --without-K --no-import-sorts #-}
+{-# OPTIONS --without-K #-}
 
 open import SpartanMLTT
 open import UF-FunExt

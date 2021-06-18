@@ -5,7 +5,7 @@
    contractible.
 -}
 {-# OPTIONS --safe --exact-split #-}
-{-# OPTIONS --without-K --no-import-sorts #-}
+{-# OPTIONS --without-K #-}
 
 open import SpartanMLTT
 open import UF-FunExt
@@ -27,11 +27,6 @@ module W-Algebra-Extended (A : 𝓤₀ ̇) (B : A → 𝓤₀ ̇) (fe : funext �
                           (ua : is-univalent 𝓤₀) where
 open W-Algebra A B fe
 open sip
-
--- wouldn't import, possibly my files are now too old, anyway:
-dfunext-refl : {X : 𝓤 ̇ } {A : X → 𝓥 ̇ } (fe : funext 𝓤 𝓥) (f : Π A)
-             → dfunext fe (λ (x : X) → refl) ≡ refl
-dfunext-refl fe f = happly-lc fe f f (happly-funext fe f f (λ x → refl))
 
 is-whom : (C D : WAlg) (f : pr₁ C → pr₁ D) → 𝓤₀ ̇
 is-whom C D f = (λ (a : A) (h : B a → (pr₁ C)) → f (pr₂ C a h)) ≡ λ a h → pr₂ D a (f ∘ h)
